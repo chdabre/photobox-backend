@@ -6,6 +6,7 @@ import logging
 import websockets
 import gphoto2 as gp
 
+import sys
 import os
 from os import listdir
 from os.path import isfile, join
@@ -14,7 +15,9 @@ logging.basicConfig()
 
 USERS = set()
 
-image_dir = "/Users/chdabre/temp/photobox/pictures"
+image_dir = "/home/pi/pictures"
+if len(sys.argv) > 1:
+    image_dir = sys.argv[1]
 
 # Returns a list of Numbers (extension=False) or a list of Strings (extension=True)
 def get_images(path, extension=False):
