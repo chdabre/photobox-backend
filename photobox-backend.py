@@ -89,6 +89,7 @@ async def print_image(websocket, base64_image):
         text_file.write(base64_image)
 
     job_id = subprocess.call(['convert inline:/home/pi/temp.b64 -resize x450 -brightness-contrast 50x-10 -dither FloydSteinberg jpg:/dev/stdout | lp -s'], shell=True)
+    subprocess.call(['convert inline:/home/pi/temp.b64 -resize x450 -brightness-contrast 50x-10 -dither FloydSteinberg jpg:/home/pi/debug.jpg'], shell=True)
     await send_message({
         'event': 'printEnqueued',
         'jobId': str(job_id)
