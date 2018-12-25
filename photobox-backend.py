@@ -76,7 +76,7 @@ async def capture(websocket):
             'filename': filename
         })
 
-        subprocess.call(['convert ' + target + ' -resize x450 -brightness-contrast 50x0 jpg:/dev/stdout | lp -s'], shell=True)
+        subprocess.call(['convert ' + target + ' -resize x450 -brightness-contrast 30x0 jpg:/dev/stdout | lp -s'], shell=True)
     except Exception as e:
         print("Error while trying to take photo: " + str(e))
         await send_message({
