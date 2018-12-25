@@ -73,7 +73,8 @@ async def capture(websocket):
         print('Image Ready!')
         await send_message({
             'event': 'imageReady',
-            'filename': filename
+            'filename': filename,
+            'name': filename.split('.')[0]
         })
         
     except Exception as e:
