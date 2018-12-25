@@ -5,6 +5,7 @@ import json
 import logging
 import websockets
 import gphoto2 as gp
+import subprocess
 
 import sys
 import os
@@ -68,6 +69,9 @@ async def capture(websocket):
         camera_file = gp.check_result(gp.gp_camera_file_get(camera, file_path.folder, file_path.name, gp.GP_FILE_TYPE_NORMAL))
         gp.check_result(gp.gp_file_save(camera_file, target))
         gp.check_result(gp.gp_camera_exit(camera))
+
+        subprocess.run(['convert', target, '-resize x400 -brightness-contrast 50x0', '~/temp.jpg'])
+        subprocess.run(['lp', '~/temp.jpg'])
 
         print('Image Ready!')
         await send_message({
