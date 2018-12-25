@@ -104,7 +104,7 @@ async def handler(websocket, path):
     finally:
         await unregister(websocket)
 
-asyncio.get_event_loop().run_until_complete(websockets.serve(handler, 'localhost', 6789))
+asyncio.get_event_loop().run_until_complete(websockets.serve(handler, '0.0.0.0', 6789))
 asyncio.get_event_loop().run_forever()
 
 gp.check_result(gp.use_python_logging())
