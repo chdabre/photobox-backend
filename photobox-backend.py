@@ -30,7 +30,7 @@ def get_images(path, extension=False):
         except ValueError:
             pass
     
-    return [filename + ".jpg" if extension else filename for filename in filenames_numbers]
+    return ["{:0>4d}.jpg".format(filename) + ".jpg" if extension else filename for filename in filenames_numbers]
 
 def get_next_filename(path):
     filenames_numbers = get_images(path)
