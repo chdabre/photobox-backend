@@ -83,7 +83,7 @@ async def capture(websocket):
             'error': str(e)
         })
 
-async def print(websocket, base64_image):
+async def print_image(websocket, base64_image):
     with open("~/temp.b64", "w") as text_file:
         text_file.write(base64_image)
 
@@ -111,8 +111,8 @@ async def handler(websocket, path):
                 await capture(websocket)
             elif data['action'] == 'list':
                 await list_images(websocket)
-            elif data['action'] == 'print':
-                await print(websocket, data['image'])
+            elif data['action'] == 'print' and data['image']:
+                await print_image(websocket, data['image'])
             elif data:
                 logging.error("unsupported event: {}".format(data))
     finally:
