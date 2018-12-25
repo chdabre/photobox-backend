@@ -75,14 +75,23 @@ async def capture(websocket):
             'event': 'imageReady',
             'filename': filename
         })
-
-        subprocess.call(['convert ' + target + ' -resize x450 -brightness-contrast 50x-10 -dither FloydSteinberg -remap pattern:gray50 jpg:/dev/stdout | lp -s'], shell=True)
+        
     except Exception as e:
         print("Error while trying to take photo: " + str(e))
         await send_message({
             'event': 'captureError',
             'error': str(e)
         })
+
+async def print(websocket, base64_image):
+    with open("~/temp.b64", "w") as text_file:
+        text_file.write(base64_image)
+
+    job_id = subprocess.call(['convert ~/temp.b64 -resize x450 -brightness-contrast 50x-10 -dither FloydSteinberg -remap pattern:gray50 jpg:/dev/stdout | lp -s'], shell=True)
+    await send_message({
+        'event': 'printEnqueued',
+        'jobId': str(job_id)
+    })
 
 async def list_images(websocket):
     # List all images in the folder
@@ -102,6 +111,8 @@ async def handler(websocket, path):
                 await capture(websocket)
             elif data['action'] == 'list':
                 await list_images(websocket)
+            elif data['action'] == 'print':
+                await print(websocket, data['image'])
             elif data:
                 logging.error("unsupported event: {}".format(data))
     finally:
