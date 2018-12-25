@@ -70,13 +70,13 @@ async def capture(websocket):
         gp.check_result(gp.gp_file_save(camera_file, target))
         gp.check_result(gp.gp_camera_exit(camera))
 
-        subprocess.call(['convert ' + target + ' -resize x400 -brightness-contrast 50x0 jpg:/dev/stdout | lp -s'], shell=True)
-
         print('Image Ready!')
         await send_message({
             'event': 'imageReady',
             'filename': filename
         })
+
+        subprocess.call(['convert ' + target + ' -resize x400 -brightness-contrast 50x0 jpg:/dev/stdout | lp -s'], shell=True)
     except Exception as e:
         print("Error while trying to take photo: " + str(e))
         await send_message({
