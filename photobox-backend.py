@@ -85,10 +85,10 @@ async def capture(websocket):
         })
 
 async def print_image(websocket, base64_image):
-    with open("~/temp.b64", "w") as text_file:
+    with open("/home/pi/temp.b64", "w") as text_file:
         text_file.write(base64_image)
 
-    job_id = subprocess.call(['convert ~/temp.b64 -resize x450 -brightness-contrast 50x-10 -dither FloydSteinberg -remap pattern:gray50 jpg:/dev/stdout | lp -s'], shell=True)
+    job_id = subprocess.call(['convert /home/pi/temp.b64 -resize x450 -brightness-contrast 50x-10 -dither FloydSteinberg -remap pattern:gray50 jpg:/dev/stdout | lp -s'], shell=True)
     await send_message({
         'event': 'printEnqueued',
         'jobId': str(job_id)
