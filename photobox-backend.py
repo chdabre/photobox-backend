@@ -70,8 +70,7 @@ async def capture(websocket):
         gp.check_result(gp.gp_file_save(camera_file, target))
         gp.check_result(gp.gp_camera_exit(camera))
 
-        subprocess.run(['convert', target, '-resize x400 -brightness-contrast 50x0', '~/temp.jpg'])
-        subprocess.run(['lp', '~/temp.jpg'])
+        subprocess.call(['convert ' + target + ' -resize x400 -brightness-contrast 50x0 jpg:/dev/stdout | lp -s'], shell=True)
 
         print('Image Ready!')
         await send_message({
