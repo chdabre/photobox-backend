@@ -6,6 +6,7 @@ import logging
 import websockets
 import gphoto2 as gp
 import subprocess
+from escpos import *
 
 import sys
 import os
@@ -88,8 +89,11 @@ async def print_image(websocket, base64_image):
     with open("/home/pi/temp.b64", "w") as text_file:
         text_file.write(base64_image)
 
-    job_id = subprocess.call(['convert inline:/home/pi/temp.b64 -resize x450 -brightness-contrast 50x-10 -dither FloydSteinberg jpg:/dev/stdout | lp -s'], shell=True)
-    subprocess.call(['convert inline:/home/pi/temp.b64 -resize x450 -brightness-contrast 50x-10 -dither FloydSteinberg jpg:/home/pi/debug.jpg'], shell=True)
+    p = printer.Usb(0x0fe6, 0x811e, 98, 0x02, 0x02)
+    p.text("\n")
+
+    job_id = subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast 50x-10 -remap pattern:gray50 -dither FloydSteinberg ps:/dev/stdout | lp -s'], shell=True)
+    subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast 50x-10 -remap pattern:gray50 -dither FloydSteinberg eps:/home/pi/debug.jpg'], shell=True)
     await send_message({
         'event': 'printEnqueued',
         'jobId': str(job_id)
