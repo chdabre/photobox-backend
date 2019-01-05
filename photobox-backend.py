@@ -109,6 +109,8 @@ async def list_images(websocket):
     })
 
 async def poll_button():
+    global button_presses
+
     while True:
         if button_presses > 0:
             await send_message({
@@ -119,8 +121,8 @@ async def poll_button():
         await asyncio.sleep(.1)
 
 def button_callback(channel):
-    if button_presses: 
-        button_presses += 1
+    global button_presses
+    button_presses += 1
 
 async def handler(websocket, path):
     await register(websocket)
