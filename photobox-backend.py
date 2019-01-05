@@ -111,6 +111,8 @@ async def list_images(websocket):
     })
 
 async def poll_button():
+    global button_presses
+    
     while button_presses > 0:
         await send_message({
             'event': 'buttonPressed',
