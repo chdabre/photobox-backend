@@ -23,8 +23,6 @@ image_dir = "/home/pi/pictures"
 if len(sys.argv) > 1:
     image_dir = sys.argv[1]
 
-button_presses = 0
-
 # Returns a list of Numbers (extension=False) or a list of Strings (extension=True)
 def get_images(path, extension=False):
     filenames_stripped = [f.split('.')[0] for f in listdir(path) if isfile(join(path, f))]
@@ -111,14 +109,14 @@ async def list_images(websocket):
     })
 
 async def poll_button():
-    if button_presses:
-        while button_presses > 0:
+    while True:
+        if button_presses > 0:
             await send_message({
                 'event': 'buttonPressed',
             })
 
             button_presses -= 1
-            await asyncio.sleep(.1)
+        await asyncio.sleep(.1)
 
 def button_callback(channel):
     if button_presses: 
@@ -142,7 +140,7 @@ async def handler(websocket, path):
     finally:
         await unregister(websocket)
 
-
+button_presses = 0
 GPIO.setmode(GPIO.BOARD)
 channel = 10
 GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
