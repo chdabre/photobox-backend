@@ -13,7 +13,11 @@ import os
 from os import listdir
 from os.path import isfile, join
 
-import RPi.GPIO as GPIO
+try:
+    import RPi.GPIO as GPIO
+    can_use_gpio = True
+except ModuleNotFoundError as e:
+    can_use_gpio = False
 
 logging.basicConfig()
 
@@ -150,20 +154,21 @@ async def handler(websocket, path):
         await unregister(websocket)
 
 button_presses = 0
-GPIO.setmode(GPIO.BOARD)
+if can_use_gpio:
+    GPIO.setmode(GPIO.BOARD)
 
-# Photo button Setup
-take_photo_pin = 10
-GPIO.setup(take_photo_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(take_photo_pin, GPIO.FALLING, callback=button_callback, bouncetime=500)
+    # Photo button Setup
+    take_photo_pin = 8
+    GPIO.setup(take_photo_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.add_event_detect(take_photo_pin, GPIO.FALLING, callback=button_callback, bouncetime=500)
 
-# Shutdown button Setup
-shutdown_pin = 8
-GPIO.setup(shutdown_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-def shutdown_callback(channel):
-    print(subprocess.call(['sudo poweroff'], shell=True))
+    # Shutdown button Setup
+    shutdown_pin = 11
+    GPIO.setup(shutdown_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    def shutdown_callback(channel):
+        print(subprocess.call(['sudo poweroff'], shell=True))
 
-GPIO.add_event_detect(shutdown_pin, GPIO.FALLING, callback=shutdown_callback, bouncetime=1000)
+    GPIO.add_event_detect(shutdown_pin, GPIO.FALLING, callback=shutdown_callback, bouncetime=1000)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(websockets.serve(handler, '0.0.0.0', 6789))
