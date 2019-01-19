@@ -160,7 +160,10 @@ GPIO.add_event_detect(take_photo_pin, GPIO.FALLING, callback=button_callback, bo
 # Shutdown button Setup
 shutdown_pin = 8
 GPIO.setup(shutdown_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.add_event_detect(shutdown_pin, GPIO.FALLING, callback=subprocess.call(['sudo poweroff'], shell=True), bouncetime=500)
+def shutdown_callback(channel):
+    subprocess.call(['echo SHUTDOWN']
+    
+GPIO.add_event_detect(shutdown_pin, GPIO.FALLING, callback=shutdown_callback, shell=True), bouncetime=500)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(websockets.serve(handler, '0.0.0.0', 6789))
