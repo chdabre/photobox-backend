@@ -13,7 +13,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 logging.basicConfig()
 
