@@ -150,10 +150,10 @@ async def handler(websocket, path):
         await unregister(websocket)
 
 button_presses = 0
-#GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BOARD)
 channel = 8
-#GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-#GPIO.add_event_detect(channel, GPIO.FALLING, callback=button_callback, bouncetime=250)
+GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.add_event_detect(channel, GPIO.FALLING, callback=button_callback, bouncetime=250)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(websockets.serve(handler, '0.0.0.0', 6789))
