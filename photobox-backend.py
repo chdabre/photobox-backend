@@ -13,7 +13,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 
 logging.basicConfig()
 
@@ -88,18 +88,25 @@ async def capture(websocket):
         })
 
 async def print_image(websocket, base64_image):
-    with open("/home/pi/temp.b64", "w") as text_file:
-        text_file.write(base64_image)
+    try:
+        with open("/home/pi/temp.b64", "w") as text_file:
+            text_file.write(base64_image)
 
-    p = printer.Usb(0x0fe6, 0x811e, 98, 0x02, 0x02)
-    p.text("~~PHOTO BOOTH~~\n")
+        p = printer.Usb(0x0fe6, 0x811e, 98, 0x02, 0x02)
+        p.text(" ")
 
-    job_id = subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast 50x-10 -remap pattern:gray50 -dither FloydSteinberg ps:/dev/stdout | lp -s'], shell=True)
-    subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast 50x-10 -remap pattern:gray50 -dither FloydSteinberg eps:/home/pi/debug.jpg'], shell=True)
-    await send_message({
-        'event': 'printEnqueued',
-        'jobId': str(job_id)
-    })
+        job_id = subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast 50x-10 -remap pattern:gray50 -dither FloydSteinberg ps:/dev/stdout | lp -s'], shell=True)
+        subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast 50x-10 -remap pattern:gray50 -dither FloydSteinberg eps:/home/pi/debug.jpg'], shell=True)
+        await send_message({
+            'event': 'printEnqueued',
+            'jobId': str(job_id)
+        })
+    except Exception as e:
+        print("Error while trying to print photo: " + str(e))
+        await send_message({
+            'event': 'printError',
+            'jobId': str(e)
+        })        
 
 async def list_images(websocket):
     # List all images in the folder
@@ -143,10 +150,10 @@ async def handler(websocket, path):
         await unregister(websocket)
 
 button_presses = 0
-GPIO.setmode(GPIO.BOARD)
-channel = 10
-GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.add_event_detect(channel, GPIO.RISING, callback=button_callback, bouncetime=200)
+#GPIO.setmode(GPIO.BOARD)
+channel = 8
+#GPIO.setup(channel, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+#GPIO.add_event_detect(channel, GPIO.FALLING, callback=button_callback, bouncetime=250)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(websockets.serve(handler, '0.0.0.0', 6789))
