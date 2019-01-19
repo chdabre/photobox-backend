@@ -161,7 +161,7 @@ GPIO.add_event_detect(take_photo_pin, GPIO.FALLING, callback=button_callback, bo
 shutdown_pin = 8
 GPIO.setup(shutdown_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 def shutdown_callback(channel):
-    subprocess.call(['echo SHUTDOWN'], shell=True)
+    print(subprocess.call(['echo SHUTDOWN'], shell=True))
 
 GPIO.add_event_detect(shutdown_pin, GPIO.FALLING, callback=shutdown_callback, bouncetime=500)
 
