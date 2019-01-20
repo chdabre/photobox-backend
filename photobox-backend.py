@@ -135,13 +135,13 @@ async def poll_messages():
     global messages
 
     while True:
-        print(messages)
         if len(messages) > 0:
+            message = messages.pop()
             await send_message({
-                'event': messages.pop(),
+                'event': message
             })
+        
         await asyncio.sleep(.1)
-
 
 def button_callback(channel):
     global button_presses
@@ -189,6 +189,7 @@ if can_use_gpio:
     def settings_callback(channel):
         global messages
         messages.append('settings')
+        print(messages)
 
     GPIO.add_event_detect(settings_pin, GPIO.FALLING, callback=settings_callback, bouncetime=1000)
 
