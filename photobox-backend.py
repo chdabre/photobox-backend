@@ -22,7 +22,6 @@ except ModuleNotFoundError as e:
 logging.basicConfig()
 
 USERS = set()
-button_presses = 0
 messages = []
 
 image_dir = "/home/pi/pictures"
@@ -122,16 +121,7 @@ async def list_images(websocket):
     })
 
 async def poll_button():
-    global button_presses
-
     while True:
-        if button_presses > 0:
-            await send_message({
-                'event': 'buttonPressed',
-            })
-
-            button_presses -= 1
-
         if messages:
             message = messages.pop()
             await send_message({
@@ -141,13 +131,12 @@ async def poll_button():
         await asyncio.sleep(.1)
 
 def button_callback(channel):
-    global button_presses
-    button_presses += 1
+    global messages
+    messages.append('buttonPressed')
 
 def settings_callback(channel):
     global messages
     messages.append('settings')
-    print(messages)
 
 async def handler(websocket, path):
     await register(websocket)
