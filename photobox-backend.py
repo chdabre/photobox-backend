@@ -131,18 +131,13 @@ async def poll_button():
             })
 
             button_presses -= 1
-        await asyncio.sleep(.1)
 
-async def poll_messages():
-    global messages
-
-    while True:
         if messages:
             message = messages.pop()
             await send_message({
                 'event': message
             })
-        
+
         await asyncio.sleep(.1)
 
 def button_callback(channel):
