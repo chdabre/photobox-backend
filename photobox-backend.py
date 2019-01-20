@@ -135,6 +135,7 @@ async def poll_messages():
     global messages
 
     while True:
+        print(messages)
         if len(messages) > 0:
             await send_message({
                 'event': messages.pop(),
