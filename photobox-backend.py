@@ -194,9 +194,6 @@ loop.run_until_complete(websockets.serve(handler, '0.0.0.0', 6789))
 gpio_task = loop.create_task(poll_button())
 loop.run_until_complete(gpio_task)
 
-messages_task = loop.create_task(poll_messages())
-loop.run_until_complete(messages_task)
-
 loop.run_forever()
 
 gp.check_result(gp.use_python_logging())
