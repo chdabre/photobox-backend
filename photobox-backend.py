@@ -186,6 +186,7 @@ if can_use_gpio:
     settings_pin = 13
     GPIO.setup(settings_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     def settings_callback(channel):
+        global messages
         messages.append('settings')
 
     GPIO.add_event_detect(settings_pin, GPIO.FALLING, callback=settings_callback, bouncetime=1000)
