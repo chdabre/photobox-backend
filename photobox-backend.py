@@ -149,6 +149,11 @@ def button_callback(channel):
     global button_presses
     button_presses += 1
 
+def settings_callback(channel):
+    global messages
+    messages.append('settings')
+    print(messages)
+
 async def handler(websocket, path):
     await register(websocket)
     try:
@@ -186,11 +191,6 @@ if can_use_gpio:
     # Settings button Setup
     settings_pin = 13
     GPIO.setup(settings_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    def settings_callback(channel):
-        global messages
-        messages.append('settings')
-        print(messages)
-
     GPIO.add_event_detect(settings_pin, GPIO.FALLING, callback=settings_callback, bouncetime=1000)
 
 loop = asyncio.get_event_loop()
