@@ -131,6 +131,17 @@ async def poll_button():
             button_presses -= 1
         await asyncio.sleep(.1)
 
+async def poll_messages():
+    global messages
+
+    while True:
+        if len(messages) > 0:
+            await send_message({
+                'event': messages.pop(),
+            })
+        await asyncio.sleep(.1)
+
+
 def button_callback(channel):
     global button_presses
     button_presses += 1
@@ -154,6 +165,7 @@ async def handler(websocket, path):
         await unregister(websocket)
 
 button_presses = 0
+messages = []
 if can_use_gpio:
     GPIO.setmode(GPIO.BOARD)
 
@@ -166,15 +178,26 @@ if can_use_gpio:
     shutdown_pin = 11
     GPIO.setup(shutdown_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     def shutdown_callback(channel):
-        print(subprocess.call(['sudo poweroff'], shell=True))
+        subprocess.call(['sudo poweroff'], shell=True)
 
     GPIO.add_event_detect(shutdown_pin, GPIO.FALLING, callback=shutdown_callback, bouncetime=1000)
+
+    # Settings button Setup
+    settings_pin = 13
+    GPIO.setup(settings_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    def settings_callback(channel):
+        messages.append('settings')
+
+    GPIO.add_event_detect(settings_pin, GPIO.FALLING, callback=settings_callback, bouncetime=1000)
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(websockets.serve(handler, '0.0.0.0', 6789))
 
 gpio_task = loop.create_task(poll_button())
 loop.run_until_complete(gpio_task)
+
+messages_task = loop.create_task(poll_messages())
+loop.run_until_complete(messages_task)
 
 loop.run_forever()
 
