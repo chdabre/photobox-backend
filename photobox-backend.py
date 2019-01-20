@@ -22,6 +22,8 @@ except ModuleNotFoundError as e:
 logging.basicConfig()
 
 USERS = set()
+button_presses = 0
+messages = []
 
 image_dir = "/home/pi/pictures"
 if len(sys.argv) > 1:
@@ -135,7 +137,7 @@ async def poll_messages():
     global messages
 
     while True:
-        if len(messages) > 0:
+        if messages:
             message = messages.pop()
             await send_message({
                 'event': message
@@ -165,8 +167,6 @@ async def handler(websocket, path):
     finally:
         await unregister(websocket)
 
-button_presses = 0
-messages = []
 if can_use_gpio:
     GPIO.setmode(GPIO.BOARD)
 
