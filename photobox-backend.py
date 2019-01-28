@@ -177,7 +177,7 @@ if can_use_gpio:
     reload_pin = 13
     GPIO.setup(reload_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     def reload_callback(channel):
-        os.execl("/home/pi/startup.sh","")
+        os.execl("/home/pi/startup.sh", " ")
 
     GPIO.add_event_detect(reload_pin, GPIO.FALLING, callback=reload_callback, bouncetime=1000)
     
