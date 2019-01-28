@@ -101,11 +101,12 @@ async def print_image(websocket, base64_image):
         p.text(" ")
 
         job_id = subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast 50x-10 -remap pattern:gray50 -dither FloydSteinberg ps:/dev/stdout | lp -s'], shell=True)
-        subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast 50x-10 -remap pattern:gray50 -dither FloydSteinberg eps:/home/pi/debug.jpg'], shell=True)
+
         await send_message({
             'event': 'printEnqueued',
             'jobId': str(job_id)
         })
+        
     except Exception as e:
         print("Error while trying to print photo: " + str(e))
         await send_message({
@@ -172,8 +173,15 @@ if can_use_gpio:
 
     GPIO.add_event_detect(shutdown_pin, GPIO.FALLING, callback=shutdown_callback, bouncetime=1000)
 
+    # Reload button Setup
+    reload_pin = 13
+    GPIO.setup(reload_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.add_event_detect(reload_pin, GPIO.FALLING, callback=reload_callback, bouncetime=1000)
+    def reload_callback(channel):
+        os.execl('/home/pi/startup.sh', '')
+
     # Settings button Setup
-    settings_pin = 13
+    settings_pin = 15
     GPIO.setup(settings_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.add_event_detect(settings_pin, GPIO.FALLING, callback=settings_callback, bouncetime=1000)
 
