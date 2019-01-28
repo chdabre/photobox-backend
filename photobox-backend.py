@@ -92,7 +92,7 @@ async def capture(websocket):
             'error': str(e)
         })
 
-async def print_image(websocket, base64_image):
+async def print_image(websocket, base64_image, brightness='0', contrast='-5'):
     try:
         with open("/home/pi/temp.b64", "w") as text_file:
             text_file.write(base64_image)
@@ -100,7 +100,7 @@ async def print_image(websocket, base64_image):
         p = printer.Usb(0x0fe6, 0x811e, 98, 0x02, 0x02)
         p.text(" ")
 
-        job_id = subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast 50x-10 -remap pattern:gray50 -dither FloydSteinberg ps:/dev/stdout | lp -s'], shell=True)
+        job_id = subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast {}x{} -monochrome -dither FloydSteinberg ps:/dev/stdout | lp -s'.format(brightness, contrast)], shell=True)
 
         await send_message({
             'event': 'printEnqueued',
@@ -151,7 +151,10 @@ async def handler(websocket, path):
             elif data['action'] == 'list':
                 await list_images(websocket)
             elif data['action'] == 'print' and data['image']:
-                await print_image(websocket, data['image'])
+                if (data['brightness'] and data['contrast']):
+                    await print_image(websocket, data['image'], data['brightness'], data['contrast'])
+                else:
+                    await print_image(websocket, data['image'])
             elif data:
                 logging.error("unsupported event: {}".format(data))
     finally:
