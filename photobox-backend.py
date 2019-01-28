@@ -176,10 +176,11 @@ if can_use_gpio:
     # Reload button Setup
     reload_pin = 13
     GPIO.setup(reload_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.add_event_detect(reload_pin, GPIO.FALLING, callback=reload_callback, bouncetime=1000)
     def reload_callback(channel):
         os.execl('/home/pi/startup.sh', '')
 
+    GPIO.add_event_detect(reload_pin, GPIO.FALLING, callback=reload_callback, bouncetime=1000)
+    
     # Settings button Setup
     settings_pin = 15
     GPIO.setup(settings_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
