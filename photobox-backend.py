@@ -100,7 +100,7 @@ async def print_image(websocket, base64_image, brightness='0', contrast='-5'):
         p = printer.Usb(0x0fe6, 0x811e, 98, 0x02, 0x02)
         p.text(" ")
 
-        job_id = subprocess.call(['convert inline:/home/pi/temp.b64 -rotate "90"  -density 203 -brightness-contrast {}x{} -monochrome -dither FloydSteinberg ps:/dev/stdout | lp -s'.format(brightness, contrast)], shell=True)
+        job_id = subprocess.call(['convert inline:/home/pi/temp.b64 -resize 1000x384 -rotate "90" -density 203 -brightness-contrast {}x{} -remap pattern:gray50 -dither Riemersma ps:/dev/stdout | lp -s'.format(brightness, contrast)], shell=True)
 
         await send_message({
             'event': 'printEnqueued',
