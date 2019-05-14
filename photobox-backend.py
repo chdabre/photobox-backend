@@ -10,6 +10,7 @@ from escpos import *
 
 import sys
 import os
+import shutil
 from os import listdir
 from os.path import isfile, join
 
@@ -25,6 +26,8 @@ USERS = set()
 messages = []
 
 image_dir = "/home/pi/pictures"
+usb_dir = "/media/pi/PHOTOBOX"
+
 if len(sys.argv) > 1:
     image_dir = sys.argv[1]
 
@@ -77,6 +80,9 @@ async def capture(websocket):
         camera_file = gp.check_result(gp.gp_camera_file_get(camera, file_path.folder, file_path.name, gp.GP_FILE_TYPE_NORMAL))
         gp.check_result(gp.gp_file_save(camera_file, target))
         gp.check_result(gp.gp_camera_exit(camera))
+
+        if os.path.isdir(usb_dir):
+            shutil.copy(target, os.path.join(usb_dir, filename))
 
         print('Image Ready!')
         await send_message({
