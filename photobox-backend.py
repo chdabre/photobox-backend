@@ -139,6 +139,7 @@ async def poll_button():
 
 def button_callback(channel):
     global messages
+    print("[BTN] TAKE_PHOTO sending buttonPressed event...")
     messages.append('buttonPressed')
 
 def settings_callback(channel):
@@ -170,7 +171,7 @@ if can_use_gpio:
     GPIO.setmode(GPIO.BOARD)
 
     # Photo button Setup
-    take_photo_pin = 16
+    take_photo_pin = 40
     GPIO.setup(take_photo_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.add_event_detect(take_photo_pin, GPIO.FALLING, callback=button_callback, bouncetime=500)
 
@@ -178,6 +179,7 @@ if can_use_gpio:
     shutdown_pin = 11
     GPIO.setup(shutdown_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     def shutdown_callback(channel):
+        print("[BTN] POWEROFF shutting down...")
         subprocess.call(['sudo poweroff'], shell=True)
 
     GPIO.add_event_detect(shutdown_pin, GPIO.FALLING, callback=shutdown_callback, bouncetime=1000)
@@ -186,6 +188,7 @@ if can_use_gpio:
     reload_pin = 13
     GPIO.setup(reload_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     def reload_callback(channel):
+        print("[BTN] RELOAD reloading photobox software...")
         os.execl("/home/pi/startup.sh", " ")
 
     GPIO.add_event_detect(reload_pin, GPIO.FALLING, callback=reload_callback, bouncetime=1000)
