@@ -171,7 +171,7 @@ if can_use_gpio:
     GPIO.setmode(GPIO.BOARD)
 
     # Photo button Setup
-    take_photo_pin = 40
+    take_photo_pin = 21
     GPIO.setup(take_photo_pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.add_event_detect(take_photo_pin, GPIO.FALLING, callback=button_callback, bouncetime=500)
 
