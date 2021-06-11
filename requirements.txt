@@ -1,2 +1,2 @@
 gphoto2==1.8.5
-websockets==7.0
+websockets==9.1
